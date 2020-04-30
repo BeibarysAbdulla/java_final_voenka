@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="layout/main.html">
+<div layout:fragment="content" class="container">
+    <div class="jumbotron" th:each="post:${news}">
+        <img th:src="@{'/uploads/news/'+${post.image_name}}" alt="" />
+        <h1 class="display-4" th:text="${post.title}"></h1>
+        <p class="lead" th:utext="${post.short_content}"></p>
+        <hr class="my-4">
+        <p th:text="${post.user.name}"></p>
+        <span th:text="${post.getCreatedAt()}"></span><br>
+        <a class="btn btn-primary btn-lg" th:href="@{'/main/learn_more/'+${post.id}}" role="button">Learn more</a>
+        <div sec:authorize="hasRole('ROLE_ADMIN')" class="mt-1">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalScrollable">
+               Change post
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form th:action="@{'/admin/changePost'}" method="post">
+                            <input type="hidden" name="post_id" th:value="${post.id}">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Title</label>
+                                    <textarea class="form-control" name="title" rows="3"  th:utext="${post.title}"></textarea>
+                                    <label>Content</label>
+                                    <textarea class="form-control" name="content" rows="3"  th:utext="${post.content}"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:each="pageNumber : ${pageNumbers}" >
+                <a class="page-link" th:href="@{/main/(p=${pageNumber})}" th:text=${pageNumber}>1</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</html>

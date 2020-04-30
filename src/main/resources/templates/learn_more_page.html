@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="layout/main.html">
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1 th:text="${post.title}"></h1>
+                <p>Posted by <a href="#"><span class="glyphicon glyphicon-user" th:text="${post.user.name}"></span></a>  on <span class="glyphicon glyphicon-time" th:text="${post.createdAt}"></span></p>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <figure class="margin">
+        <img class="img-post" th:src="@{'data:image/jpeg;base64,'+${post_image}}" alt="">
+    </figure>
+
+    <p th:utext="${post.short_content}"></p>
+    <p th:utext="${post.content}"></p>
+    <hr>
+
+    <h1 align="center" sec:authorize="isAuthenticated() ">Comments</h1>
+
+    <div th:each="com:${comments}" th:if="${com.news.equals(post)}">
+        <div class="comment ">
+            <div class="media">
+                <div class="media-left">
+                    <img th:src="@{/images/notPhoto.jpg}" class="comment_img" alt="">
+                </div>
+                <div class="media-body">
+                    <h4 th:text="${com.user.surname}+' '+${com.user.name}"></h4>
+                    <p th:text="${com.createdAt}"></p>
+                    <p th:utext="${com.comment}"></p>
+                    <div th:if="${com.user.equals(kirgen_user)}">
+                        <div class="row">
+
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#example">
+                                Change Comment
+                            </button>
+                            <!--modal change commet-->
+                            <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleLabel">hello <span th:text="${kirgen_user.name}"></span>!</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form th:action="@{'/main/changeComment'}" method="post">
+                                            <input type="hidden" name="comment_id" th:value="${com.id}">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label>Content</label>
+                                                    <textarea class="form-control" name="comment" rows="3"  th:text="${com.comment}"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end-->
+
+
+                            <form th:action="@{'/main/deleteComment'}" method="post">
+                                <input type="hidden" name="comment_id" th:value="${com.id}">
+                                <input type="hidden" name="post_id" th:value="${post.id}">
+                                <div style="text-align: right">
+                                    <button class="btn btn-outline-danger ml-2 ">delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div sec:authorize="hasRole('ROLE_USER')">
+        <h3>Leave a comment</h3>
+        <p>Please keep in mind that comments are moderated and rel="nofollow" is in use. So, please do not use a spammy
+            keyword or a domain as your name, or else it will be deleted. Thank you!</p>
+
+        <div class="comment">
+            <form th:action="@{/main/addComment}" method="post">
+                <div class="form-group">
+                    <label for="contactComment">Comment</label>
+                    <textarea class="form-control" id="contactComment" name="comment"></textarea>
+                    <input type="hidden" name="post_id" th:value="${post.id}">
+                </div>
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+        </div>
+        <hr>
+    </div>
+
+
+</div>

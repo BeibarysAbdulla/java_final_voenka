@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"   xmlns:th="http://www.w3.org/1999/xhtml"
+                  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+                  layout:decorator="layout/main.html">
+
+<div class="container" layout:fragment="content">
+    <div class="row mb-5">
+        <div class="col-sm-6 offset-3">
+            <form th:action="@{/userCon/registr}" th:object="${userForm}" method="post">
+                <div class="form-group">
+                    <label th:text="#{label.name}">
+                    </label>
+                    <input type="text"   name="name"  class="form-control">
+                    <label th:text="#{label.surname}">
+                    </label>
+                    <input type="text"  name="surname" class="form-control">
+                    <label>
+                        EMAIL
+                    </label>
+                    <input type="email"  name="email" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label th:text="#{label.password}"></label>
+                    <input type="text"  name="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label th:text="#{label.passwordConfirm}"></label>
+                    <input type="text"  name="passwordConfirm" class="form-control">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" id="submit" th:text="#{button.register}"></button>
+                </div>
+               </form>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${soz!='link'}">
+                <span th:utext="${soz}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</html>

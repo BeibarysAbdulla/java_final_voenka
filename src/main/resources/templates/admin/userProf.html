@@ -1,0 +1,87 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="layout/main.html">
+<div layout:fragment="content" class="container">
+    <link rel="stylesheet" href="/css/userProf.css">
+    <div class="container bootstrap snippet">
+       <!-- <div class="row">
+            <div class="col-sm-10">Admin in page of <h1 th:text="${user.email}"></h1></div>
+            <div class="col-sm-2"><a href="/users" class="pull-right"><img title="profile image" class="img-soldat" th:src="@{/images/userSoldat.png}"></a></div>
+        </div>-->
+        <div class="row mt-5">
+            <div class="col-sm-3"><!--left col-->
+
+
+                <div class="text-center">
+                    <div th:if="${user.image_path==nul}">
+                        <img th:src="@{/images/notPhoto.jpg}" class="avatar img-circle img-thumbnail" alt="avatar">
+                    </div>
+                    <div th:unless="${user.image_path==nul}">
+                        <img th:src="@{'data:image/jpeg;base64,'+${avatar}}" class="avatar" alt="avatar">
+                    </div>
+                </div></hr><br>
+                <h3 th:text="#{user.photo}"></h3>
+            </div><!--/col-3-->
+            <div class="col-sm-9">
+                <ul class="list-group">
+                    <li class="list-group-item active">Informations</li>
+                    <li class="list-group-item">Email: <span  th:text="${user.email}"></span></li>
+                    <li class="list-group-item"><span th:text="#{label.name}"></span>: <span th:text="${user.name}"></span></li>
+                    <li class="list-group-item"><span th:text="#{label.surname}"></span>: <span th:text="${user.surname}"></span></li>
+                    <li class="list-group-item"><span>Document: </span>
+                        <span th:if="${user.doc_name!=null}" ><a th:href="@{'/file/download/'+${user.id}}" th:text="${user.doc_name}"></a></span>
+                        <span th:unless="${user.doc_name!=null}"><span>This user not upload doc file</span></span>
+                    </li>
+                    <li class="list-group-item">
+                        <form th:action="@{/admin/delete}">
+                            <input type="hidden" name="id" th:value="${user.id}">
+                            <button class="btn btn-danger" th:text="#{button.delete}"></button>
+                        </form>
+                    </li>
+                </ul>
+
+            </div><!--/col-9-->
+        </div><!--/row-->
+    </div>
+
+    <div th:each="message:${messages}">
+        <div th:if="${message.user.equals(user)}">
+            <div class="alert alert-success" role="alert" th:if="${message.type=='Good'}">
+                <h4 class="alert-heading">Admin</h4>
+                <p th:text="${message.content}"></p>
+            </div>
+            <div class="alert alert-danger" role="alert" th:if="${message.type=='Bad'}">
+                <h4 class="alert-heading">Admin</h4>
+                <p th:text="${message.content}"></p></div>
+            <div class="alert alert-secondary" role="alert" th:if="${message.type=='Norm'}">
+                <h4 class="alert-heading">Admin</h4>
+                <p th:text="${message.content}"></p>
+            </div>
+        </div>
+    </div>
+
+   <!-- <div sec:authorize="isAuthenticated()">
+
+    </div>-->
+    <!--
+    Send message-->
+    <div class="comment mt-5" sec:authorize="hasRole('ROLE_ADMIN')">
+        <form th:action="@{/admin/sendMessage}" method="post">
+            <div class="form-group">
+                <input type="hidden" th:value="${user.id}" name="user_id">
+                <label for="Type">Type message</label>
+                <select name="type" id="Type" class="form-control">
+                    <option>Good</option>
+                    <option>Norm</option>
+                    <option>Bad</option>
+                </select>
+                <label for="contactComment">Message to user</label>
+                <textarea class="form-control" id="contactComment" name="content"></textarea>
+                <input type="hidden" name="post_id">
+            </div>
+            <button type="submit" class="btn btn-warning">Submit</button>
+        </form>
+    </div>
+
+</div>

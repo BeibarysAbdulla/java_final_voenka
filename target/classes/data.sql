@@ -1,0 +1,1 @@
+/*insert into users(id,createdAt,updatedAt,deletedAt,email,password,passwordConfirm,name,surname,null,null ,null,null,null ,null) VALUES (nextval('s_users'), )*/

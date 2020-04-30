@@ -1,0 +1,215 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="layout/main.html">
+<div layout:fragment="content">
+
+    <hr>
+    <div class="container bootstrap snippet">
+        <div class="row">
+            <div class="col-sm-10"></div>
+            <div class="col-sm-2"><a href="/users" class="pull-right"><img title="profile image" class="img-soldat" th:src="@{/images/userSoldat.png}"></a></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"><!--left col-->
+
+
+                <div class="text-center">
+                    <div th:if="${user.image_path==nul}">
+                        <img th:src="@{/images/notPhoto.jpg}" class="avatar img-circle img-thumbnail" alt="avatar">
+                    </div>
+                    <div th:unless="${user.image_path==nul}">
+                        <img th:src="@{'data:image/jpeg;base64,'+${avatar}}" class="avatar img-circle img-thumbnail" alt="avatar">
+                    </div>
+                    <button type="button" class="btn btn-outline-success mt-2" data-toggle="modal" data-target="#example">
+                        Upload image
+                    </button>
+                    <!--modal change commet-->
+                    <div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleLabel">hello <span th:text="${user.name}"></span>!</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form th:action="@{/file/imageUpload}"  method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <input type="file" class="form-group" name="file">
+                                            <input type="hidden" name="user_id" th:value="${user.id}">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" th:text="#{button.add}"></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end-->
+
+                </div></hr><br>
+
+            </div><!--/col-3-->
+            <div class="col-sm-9">
+                <ul class="list-group">
+                    <!--<li class="list-group-item active">Informations</li>-->
+                    <li class="list-group-item">Email: <span  th:text="${user.email}"></span></li>
+                    <li class="list-group-item"><span th:text="#{label.name}"></span>: <span th:text="${user.name}"></span></li>
+                    <li class="list-group-item"><span th:text="#{label.surname}"></span>: <span th:text="${user.surname}"></span></li>
+                    <li class="list-group-item"><span>Document file: </span>
+                        <div th:if="${user.doc_name!=null}">
+                            <a th:href="@{'/file/download/'+${user.id}}" th:text="${user.doc_name}"></a>
+                        </div>
+                        <div th:unless="${user.doc_name!=null}">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#static" th:text="#{button.addDoc}">
+                            </button>
+                            <div class="modal fade" id="static" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticLabel">Choose doc file</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form th:action="@{/file/uploadDoc}" method="post" enctype="multipart/form-data">
+                                            <div class="modal-body">
+                                                <input type="file" name="file">
+                                                <!--<input type="hidden" name="id" th:value="${user.id}">-->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary" th:text="#{button.add}"></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--modale end-->
+
+                        </div>
+
+                    </li>
+                    <li class="list-group-item">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+                            Edit Profile
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Edit profile</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="comment">
+                                            <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Profile</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Password</a>
+                                                </li>
+                                                <li class="nav-item" th:if="${user.doc_name!=null}">
+                                                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Document file</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content" id="myTabContent">
+                                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                                    <form class="form-group" th:action="@{/userCon/updateProfile}" method="post">
+                                                        <label>First Name</label>
+                                                        <input type="text" th:value="${user.name}" name="name" class="input-xlarge form-control">
+                                                        <label>Last Name</label>
+                                                        <input type="text" th:value="${user.surname}" name="surname" class="input-xlarge form-control">
+                                                        <label>Email</label>
+                                                        <input type="text" th:value="${user.email}" name="email"
+                                                               class="input-xlarge form-control">
+                                                        <div>
+                                                            <button class="btn btn-warning mt-2">Update</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                                    <form th:action="@{/userCon/updatePassword}"  class="form-group" method="post">
+                                                        <label>New Password</label>
+                                                        <input type="password" name="password" class="form-control">
+                                                        <label>Confirm Password</label>
+                                                        <input type="password" name="passwordConfirm" class="form-control">
+                                                        <div>
+                                                            <button class="btn btn-warning mt-2">Update</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                                    <form th:action="@{/userCon/updateDoc}" method="post" enctype="multipart/form-data">
+                                                        <input type="file" name="file">
+                                                        <button type="submit" class="btn btn-primary" th:text="#{button.add}"></button>
+                                                    </form>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Understood</button>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+                <div th:if="${!message.equals('null')}">
+                    <div th:if="${message.equals('password confirm not equal password!')}">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <span th:text="${message}"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div th:unless="${message.equals('password confirm not equal password!')}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${message}"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div><!--/col-9-->
+    </div><!--/row-->
+        <div th:each="mes:${messages}">
+            <div th:if="${mes.user.equals(user)}">
+                <div class="alert alert-success" role="alert" th:if="${mes.type=='Good'}">
+                    <h4 class="alert-heading">Admin</h4>
+                    <p th:text="${mes.content}"></p>
+                </div>
+                <div class="alert alert-danger" role="alert" th:if="${mes.type=='Bad'}">
+                    <h4 class="alert-heading">Admin</h4>
+                    <p th:text="${mes.content}"></p></div>
+                <div class="alert alert-secondary" role="alert" th:if="${mes.type=='Norm'}">
+                    <h4 class="alert-heading">Admin</h4>
+                    <p th:text="${mes.content}"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>
+

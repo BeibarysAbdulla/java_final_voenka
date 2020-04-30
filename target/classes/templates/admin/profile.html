@@ -1,0 +1,153 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorator="layout/main.html">
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-sm-12 mt-3">
+            <h1>Admin page of <i><span th:text="${admin.email}"></span></i></h1>
+            <br><br>
+            <h2>List of users</h2>
+            <table class="table mt-2">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">more Info</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user:${users_null}">
+                    <th scope="row" th:text="${user.id}"></th>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.surname}"></td>
+                    <td>
+                        <a th:href="@{'/admin/more/'+${user.id}}" role="button" class="btn btn-outline-warning"> more info</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}" >
+                        <a class="page-link" th:href="@{/main/admin_profile(p=${pageNumber})}" th:text=${pageNumber}>1</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <br>
+            <hr>
+            <h1>List of users wich tekserilude</h1>
+            <br>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tekserlimegen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Tekseristen otken</a>
+                </li>
+
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <table class="table mt-2">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">more Info</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user:${users_not_null}">
+                            <th scope="row" th:text="${user.id}"></th>
+                            <td th:text="${user.email}"></td>
+                            <td>
+                                <a th:href="@{'/admin/more/'+${user.id}}" role="button" class="btn btn-outline-warning"> more info</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <table class="table mt-2">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">more Info</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="mas:${good_mas}">
+                            <th scope="row" th:text="${mas.user.id}"></th>
+                            <td th:text="${mas.user.email}"></td>
+                            <td>
+                                <a th:href="@{'/admin/more/'+${mas.user.id}}" role="button" class="btn btn-outline-warning"> more info</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            <br>
+            <hr>
+            <br>
+            <h1 align="center">Add news</h1>
+
+            <script src="https://cdn.ckeditor.com/ckeditor5/18.0.0/classic/ckeditor.js"></script>
+            <div class="row">
+                <div class="col-sm-8 offset-2">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${message!='null'}">
+                        <span th:utext="${message}"></span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form th:action = "@{'/admin/addPost'}" method="post" enctype="multipart/form-data">
+                        <label >
+                            UPLOAD IMAGE FILE:
+                        </label>
+                       <div class="form-group">
+                           <input type="file" name="file" class="form-controller">
+                       </div>
+                        <br>
+                        <div class="form-group">
+                            <label>
+                                TITLE :
+                            </label>
+                            <input type="text" class="form-control" name="title">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                SHORT CONTENT:
+                            </label>
+                            <input type="text" class="form-control" name="short_content">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                CONTENT :
+                            </label>
+                            <textarea name="content" id = "post_content"  style="min-height: 300px;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-info" th:text = "#{button.add}"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                ClassicEditor
+                    .create( document.querySelector( '#post_content' ) )
+                    .catch( error => {
+                        console.error( error );
+                    } );
+            </script>
+        </div>
+    </div>
+</div>
+</html>
